@@ -1,0 +1,39 @@
+orgvar | var | descr
+
+pct_deforested | pct_deforested | Percentage of Thiessen polygon deforested 2000-2003
+pov_ind_95 | pov_ind_95 | Marginality index for poverty 1995
+forest_prior | forest_prior | Baseline area in forest 2000
+dens_road | dens_road | Road density as length of roads (km) in 10km buffer
+d | d | Dummy variable; 1 if there was positive deforestation in 2000-2003
+ecoreg_control_1 | ecoreg_control_1 | Ecoregional control 1
+ecoreg_control_2 | ecoreg_control_2 | Ecoregional control 2
+ecoreg_control_3 | ecoreg_control_3 | Ecoregional control 3
+ln_area_polyg | ln_area_polyg | Ln(polygon area)
+deg_slope | deg_slope | Average slope in degrees
+ln_pop | ln_pop | Ln(total population in 1995)
+ln_dens_road | ln_dens_road | Ln(1 + dens_road)
+prop_treat | prop_treat | Proportion of population in locality treated 1997-2003
+treat | treat | Dummy variable; 1 if locality was treated
+pov_ind_2 | pov_ind_2 | Marginality index squared
+pov_ind_3 | pov_ind_3 | Marginality index cubed
+pov_ind_4 | pov_ind_4 | Marginality index to the 4th
+smallsample | smallsample | Dummy variable; 1 if marginality index lies between -2 and -0.2
+eligible | eligible | Dummy variable; 1 if locality is eligible (marginality index >-1.22)
+marginal | marginal | Dummy variable; 1 if marginality index lies between -1.22 and -0.9
+marginal_povind95 | marginal_povind95 | Crossproduct marginal x pov_ind_95
+eligible_povind95 | eligible_povind95 | Crossproduct eligible x pov_ind_95
+n_household_treat | n_household_treat | Ln(1 + number of treated households in locality)
+post_year | post_year | Dummy variable; 1 if data are from post treatment year
+te | te | Treatment effect
+dens_road_inv | dens_road_inv | Inverse of road density
+treat_densroadinv | treat_densroadinv | Crossproduct treat x dens_road_inv
+postyear_densroadinv | postyear_densroadinv | Crossproduct postyear x dens_road_inv
+te_densroadinv | te_densroadinv | Crossproduct te x dens_road_inv
+poor | poor | Categorical variable with levels "poor", "notpoor" according to a model in 1997
+code_loc | code_loc | Complete code indicating state, municipality and locality
+n_rooms | n_rooms | Total number of rooms in the flat
+dpw_beef | dpw_beef | Number of days per week on which household ate beef
+dpw_milk | dpw_milk | Number of days per week on which household drank milk
+n_plots | n_plots | Total number of plots
+ln_hectares | ln_hectares | Ln(1 + Total Hectares)
+n_cows | n_cows | Total number of cows
