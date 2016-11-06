@@ -138,7 +138,7 @@ margEff_tobit_dM_AER = function(tobit,data){
     colnames(margEff_E_conti_i)[1] = "Estimate E[y|y>0]"
     
     #Save results in data frames for each kind of marginal effect
-    #of all continous variables
+    #of all continuous variables
     if (firstconti==FALSE){
       firstconti = TRUE
       margEff_P_conti = margEff_P_conti_i
@@ -194,7 +194,7 @@ margEff_tobit_dM_AER = function(tobit,data){
     colnames(margEff_E_bin_i)[1] = "Estimate E[y|y>0]"
     
     #Save results in data frames for each kind of marginal effect
-    #of all continous variables
+    #of all binary variables
     if (firstbin==FALSE){
       firstbin = TRUE
       margEff_P_bin = margEff_P_bin_i
@@ -663,7 +663,7 @@ effects_tobit_dM_AER = function(tobit,data, p_lower, p_upper){
     colnames(Eff_E_conti_i)[1] = "Estimate E[y|y>0]"
     
     #Save results in data frames for each kind of effect
-    #of all continous variables
+    #of all continuous variables
     if (firstconti==FALSE){
       firstconti = TRUE
       Eff_P_conti = Eff_P_conti_i
@@ -720,7 +720,7 @@ effects_tobit_dM_AER = function(tobit,data, p_lower, p_upper){
     colnames(margEff_E_bin_i)[1] = "Estimate E[y|y>0]"
     
     #Save results in data frames for each kind of marginal effect
-    #of all continous variables
+    #of all binary variables
     if (firstbin==FALSE){
       firstbin = TRUE
       Eff_P_bin = margEff_P_bin_i

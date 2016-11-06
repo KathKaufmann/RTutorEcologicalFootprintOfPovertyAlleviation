@@ -13,7 +13,7 @@ check.problem.set('Ecological Footprint of Poverty Alleviation', ps.dir, ps.file
 
 
 Author:  Katharina Kaufmann  
-Date:    30.10.2016
+Date:    6.11.2016
 
 ## Exercise Overview
 
@@ -30,7 +30,7 @@ The structure is therefore as follows:
 The first exercise gives background information about the **"Oportunidades"**" program and deforestation and makes you familiar with the first data set.  
 **2. Treatment effect**  
 The central question in the second exercise is: "Is there a correlation or causal effect between the participation in the program and deforestation?". The Tobit model and the concept of the RD design are introduced here.  
-**3. Household level explanation & Role of infrastructure quality**  
+**3. Household level explanation & Role of infrastructure quantity**  
 The third exercise deals with a possible explanation of the findings in *Exercise 2* studying the changes in consumption and production behavior of households and makes use of a second data set. Here, the difference-in-difference estimator is used.  
 As soon as treated localities are linked with other localities through roads, increases in consumption can be sourced from neighboring localities and lead to environmental impacts there. The exercise thus also studies the extent to which the effect is mediated and draws conclusions about the measurability of the treatment effect. 
 *Unfortunately, we cannot reproduce the results of the spatial contours of the effect itself due to a lack of data. But I will sum up the authors' results on this to give you a complete picture of their arguing and final interpretation.*  
@@ -59,7 +59,7 @@ Originally, only very poor rural households could participate in the program - a
 **1. Choice of eligible localities:** A locality is eligible, if its marginality index describing the degree of poverty exceeds a certain value.  
 **2. Choice of eligible households:** A survey among the households in an eligible locality serves to detect the households "poor enough" to be eligible.
 
-*(Cf. paper; Skoufias (2005); website of the program* <https://www.prospera.gob.mx/swb/swb/PROSPERA2015/> *)*
+*(Cf. paper; Skoufias (2005); [Prospera homepage (2016)](http://www.gob.mx/prospera "http://www.gob.mx/prospera"))*
 
 
 Throughout this problem set we will use two data sets: The first one contains data on the program and on deforestation on the locality level; The second one contains data from the test phase of the program which allows to study the consumption and production behavior on the household level for a restricted number of localities. We will focus on the first data set in this exercise, leaving the other one to *Exercise 3*.
@@ -91,11 +91,12 @@ info("Variable descriptions") # Run this line (Strg-Enter) to show info
 Each observation in the data set corresponds to one community with all the observations restricted to rural communities (at most $2500$ inhabitants) with a marginality index from 1995 smaller than $3.0$ and at least ten hectares of forest in 2000. *(Cf. paper, pp.420-421; data set)* 
 You can find the following information in this data set:
 
-* **Characteristics of the communities:** e.g. population numbers (*lnpop*), infrastructure quality (*dens_road*)
+* **Characteristics of the communities:** e.g. population numbers (*lnpop*), infrastructure quantity (*dens_road*)
 * **Treatment with "Oportunidades":** e.g. marginality index (*pov_ind_95*) as determinant of eligibility (*eligible*), treatment (*treat*)
 * **Variables on deforestation:** See *Exercise 1.2*
 
-info("Comment on this data set") # Run this line (Strg-Enter) to show info
+info("Comment on deforestation data set") # Run this line (Strg-Enter) to show info
+
 ### b) Poverty, eligibility and treatment
 The **marginality index** plays a very important role in this analysis. It is the base for determining the eligibility of a locality for the program and an important factor in the question if a locality was treated or not. It was computed considering aspects like illiteracy, access to running water, dwelling and electricity, number of people living in a room and proportion of people working in the agricultural sector.  
 The **poorer** a community, the **higher** its marginality index. One number to remember is the value $-1.22$: It is the cutoff between low and medium levels of poverty and at the same time the cutoff for being eligible for "Oportunidades".  
@@ -134,7 +135,7 @@ data_deforest = mutate(data_deforest,
 head(data_deforest)
 ```
 
-Further, the mean of the variable *treat* for each value of the variable *aux_bins_povind* - so for each auxiliary bin - is calculated and called *prop_treated*. This is done by the command *summarize* in combination with *group_by* which finally returns a data frame containing only the grouping variable *bins_povind* and the newly calculated column *prop_treated*. After having run the code, have a look at the shown first six rows of the data frame to get an idea about what the command has done.
+Further, the mean of the variable *treat* for each value of the variable *aux_bins_povind* - so for each auxiliary bin - is calculated and called *prop_treated*. This is done by the command *summarize* in combination with *group_by* which finally returns a tibble containing only the grouping variable *bins_povind* and the newly calculated column *prop_treated*. After having run the code, have a look at the shown first six rows of the returned tibble to get an idea about what the command has done.
 
 ```{r "1_1__5"}
 #Add the column prop_treated to data_deforest calculating the mean of treat
@@ -157,7 +158,7 @@ Now it is your turn to create a plot following the example before. It shall show
 
 ```
 Now show the plot by just showing the variable *p_proptreated*.
-```{r "1_1__7",fig.height=6}
+```{r "1_1__7",fig.height=3}
 #Show p_proptreated
 
 ```
@@ -232,7 +233,7 @@ data_deforest = mutate(data_deforest,
 head(data_deforest)
 ```
 
-Now use the command *summarize(group_by())* from the package *'dplyr'* to create a data frame with two columns: One containing the grouping variable *aux_bins_povind* and one containing the mean of the variable *d* for all localities with the same value of *aux_bins_povind*. If you need some help for this task, have a look at *Exercise 1.1b* again. Call the newly calculated variable *prop_posdefor* and the summarized data set *dat_d*. Finally, show the first six rows of the data set.
+Now use the command *summarize(group_by())* from the package *'dplyr'* to create a tibble with two columns: One containing the grouping variable *aux_bins_povind* and one containing the mean of the variable *d* for all localities with the same value of *aux_bins_povind*. If you need some help for this task, have a look at *Exercise 1.1b* again. Call the newly calculated variable *prop_posdefor* and the summarized data set *dat_d*. Finally, show the first six rows of *dat_d*.
 
 ```{r "1_2__5"}
 #Calculate the mean of d for each value of aux_bins_povind
@@ -249,7 +250,7 @@ library(ggplot2)
 ```
 
 In a second step we consider the illustration of the **percentage of polygon deforested**.  
-This works analogous to the illustration of the probability of deforestation: The variable of interest of which we will calculate the mean in each bin is now *pct_deforested* instead of *d*. To shorten it, the code for the respective data preparation and plotting is already given. Besides, the head of the data frame *dat_pct* is shown.  
+This works analogous to the illustration of the probability of deforestation: The variable of interest of which we will calculate the mean in each bin is now *pct_deforested* instead of *d*. To shorten it, the code for the respective data preparation and plotting is already given. Besides, the head of *dat_pct* is shown.  
 *This corresponds to figure 3 on p.422 in the paper.*
 ```{r "1_2__7"}
 #Add the column mean_pctdefor to data_deforest calculating the mean of d
@@ -333,8 +334,8 @@ So we need a different approach to measure the effect of treatment on the percen
 ## b) Probability of deforestation - OLS approach
 What about the probability of deforestation? In order to find out how this quantity changes with treatment, a very common approach is to consider a **Linear Probability Model (LPM)** which is to be estimated then by *OLS*. If you are not used to this model, have a look at the *'info' box* below.
 info("Linear Probability Model") # Run this line (Strg-Enter) to show info
-In our case, the dependent variable is the dummy variable *d* indicating if there was positive deforestation between 2000 and 2003. *(Cf. original data set "ecological_footprint_restat_deforetation_data.dta") For the beginning we consider the dummy variable *treat* as sole explanatory variable.  
-In the following code chunk, we are going to estimate the LPM of *d* on the dummy variable *treat* by OLS. As we need to account for heteroskedasticity, we have to use robust standard errors. Alix-Garcia et al. use the kind of robust standard errors calculated by Stata: Huber-White standard errors (HC1). *(For further information on this, see the according help pages of STATA: <http://www.stata.com/manuals13/rregress.pdf> and <http://www.stata.com/manuals13/u20.pdf> (Chapter 20.21))* We can quite easily replicate them using the arguments *robust=TRUE* and *robust.type="H1"* in the *showreg* command.  
+In our case, the dependent variable is the dummy variable *d* indicating if there was positive deforestation between 2000 and 2003. *(Cf. original data set "ecological_footprint_restat_deforetation_data.dta")* For the beginning we consider the dummy variable *treat* as sole explanatory variable.  
+In the following code chunk, we are going to estimate the LPM of *d* on the dummy variable *treat* by OLS. As we need to account for heteroskedasticity, we have to use robust standard errors. Alix-Garcia et al. use the kind of robust standard errors calculated by Stata: Huber-White standard errors (HC1). *(For further information on this, see the according help pages of STATA: [Stata manual, command regress (2016)](http://www.stata.com/manuals13/rregress.pdf "http://www.stata.com/manuals13/rregress.pdf") and [Stata manual, Chapter 20 (2016)](http://www.stata.com/manuals13/u20.pdf "http://www.stata.com/manuals13/u20.pdf") (subchapter 20.21))* We can quite easily replicate them using the arguments *robust=TRUE* and *robust.type="H1"* in the *showreg* command.  
 Analogous to the last code chunk, fill in the code for this regression and save the regression in the variable *ols_d_treat*. The code for showing the regression results is already given.
 ```{r "2_1__4"}
 #OLS regression ols_d_treat of dummy variable indicating deforestation
@@ -443,7 +444,7 @@ In the following, we will compare the Tobit regression accounting for all these 
 #Load the data set "data_deforest.rds" and save it in data_deforest
 data_deforest = readRDS("data_deforestation.rds")
 ```
-In the following code chunk, the simple Tobit regression with sole explanatory variable *treat* from *Exercise 2.2* is run again. Run a second regression adding the following explanatory variables: *pov_ind_95*, *forest_prior*, *ln_pop*, *ln_area_polyg*, *ln_dens_road*, *deg_slope*, *ecoreg_control_1*, *ecoreg_control_2*, *ecoreg_control_3* and call it *tobit_pct_extended*.
+In the following code chunk, the simple Tobit regression with sole explanatory variable *treat* from *Exercise 2.1* is run again. Run a second regression adding the following explanatory variables: *pov_ind_95*, *forest_prior*, *ln_pop*, *ln_area_polyg*, *ln_dens_road*, *deg_slope*, *ecoreg_control_1*, *ecoreg_control_2*, *ecoreg_control_3* and call it *tobit_pct_extended*.
 
 ```{r "2_2__2"}
 #Load package 'AER'
@@ -482,7 +483,8 @@ For both the conditional probability and the conditional expected amount of defo
 Is this already the answer to the question how treatment with the program affects deforestation? More precisely: Is it already enough to use Tobit instead of OLS regressions and to add the variables depicted above to make sure that the estimated treatment coefficient reflects the *causal* influence of treatment on deforestation?  
 Unfortunately, the answer is **no.**  The basic problem is that **treatment "is not randomly assigned"** *(paper, p.423)* for the following two reasons:  
 * **1.** A locality could only be treated if it was declined *eligible* which applied only for localities which were *poor enough*. It is likely that those poor localities might have shared further characteristics influencing their deforestation behavior.  
-* **2.** Second, treatment was *voluntary* meaning that the localities could decide themselves whether they wanted to participate in the program or not. So it might be the case that those who decided pro participating were systematically different from those deciding against it which might be reflected as well in the deforestation behavior. This means that there might be a **selection bias**.  
+* **2.** Second, treatment was *voluntary* meaning that the localities could decide themselves whether they wanted to participate in the program or not. So it might be the case that those who decided pro participating were systematically different from those deciding against it which might be reflected as well in the deforestation behavior. This means that there might be a **selection bias**.
+
 *(Cf. paper, p.423)*
 
 In the recent OLS and Tobit regressions the estimated marginal effects of treatment on the probability of deforestation as well as on the amount of deforestation given there was deforestation, are negative. So one could imagine two different kinds of scenarios:  
@@ -504,7 +506,7 @@ Until now, you have already got to know some possible methods to measure the cor
 
 
 ## Exercise 2.3 -- Regression Discontinuity Design
-In order to find out whether and how treatment affects deforestation a simple Tobit regression on the variable *treat* and control variables is very likely to be biased. The main reason for this problem is the fact that treatment is not randomly assigned. Fortunately, we can use another method to estimate the (causal) treatment effect almost as well as if treatment was randomly assigned: the **Regression Discontinuity Design (RD Design):**
+In order to find out whether and how treatment affects deforestation a simple Tobit regression on the variable *treat* and control variables is not very well suited as it is very likely that the according estimator is biased. The main reason for this problem is the fact that treatment is not randomly assigned. Fortunately, we can use another method to estimate the (causal) treatment effect almost as well as if treatment was randomly assigned: the **Regression Discontinuity Design (RD Design):**
 - - -
 Consider the outcome variable $y$, the treatment variable $D$ (equals $1$ if the subject is treated and $0$ else) and the running variable $a$. The causal question of interest is: How does treatment affect the outcome?  
 In the **sharp RD design** treatment $D$ is defined as  
@@ -555,7 +557,7 @@ Taking a closer look at the plot of the percentage of area deforested over the m
 Zooming in a small range around the cutoff might help at least to show the discontinuity better. More precisely, we will focus on the range of the marginality index from $-2.0$ to $-0.2$. The variable $smallsample$ in the data set indicates if an observation is part of this range or not. In the following this subsample is called **"restricted sample"** like in the paper *(p.423)*.  
 We are going to plot a finer histogram of average values of the outcome for the small sample first and then use a nonparametric regression approach to study the behavior of the outcome at the cutoff.
 
-In the following, we use the restricted sample and a bin width of $0.01$ instead of $0.1$. This time, we will use the command *geom_bar(stat="identity",...)* which plots bars with the value of the $y$ variable. Apart from these aspects, the implementation is analogous to the one of *p_pctdefor*. As the way how to plot such a histogram shall not be central to this exercise (for this purpose see *Exercises 1.1* and *1.2*) the code is already given. Have a look at it and then click on the *'check' button* to run it. If you are interested in what the data frames look like, you can find them in the *'Data Explorer'*.
+In the following, we use the restricted sample and a bin width of $0.01$ instead of $0.1$. This time, we will use the command *geom_bar(stat="identity",...)* which plots bars with the value of the $y$ variable. Apart from these aspects, the implementation is analogous to the one of *p_pctdefor*. As the way how to plot such a histogram shall not be central to this exercise (for this purpose see *Exercises 1.1* and *1.2*) the code is already given. Have a look at it and then click on the *'check' button* to run it. If you are interested in what the data sets look like, you can find them in the *'Data Explorer'*.
 ```{r "2_3__3"}
 #Extract the restricted sample from data_deforest
 data_deforest_small = filter(data_deforest, smallsample==1)
@@ -577,7 +579,7 @@ p_pctdefor_small = ggplot(data=dat_pct_small,
 #Show the plot
 p_pctdefor_small
 ```
-This graphic gives even less evidence for any jump at the cutoff. In contrary, the behavior of the dependent variable seems to be rather random.
+This graphics gives even less evidence for any jump at the cutoff. In contrary, the behavior of the dependent variable seems to be rather random.
 
 A more advanced approach to study the behavior of the dependent variable in an area close to the cutoff is to use nonparametric regressions and apply them to the left and the right side of the cutoff like it is explained for example by Imbens and Lemieux *(2008, p.622)*. This is what we will do now - more precisely, we will run **kernel regressions for each side of the cutoff** like Alix-Garcia et al.. *(Cf. paper, p.423, figure 4)* For an introduction to kernel regressions, have a look at the *'info' box* below.  
 *Please note that the graphics we will develop in the following corresponds to figure 4 on p.423 in the paper even though there is no code available to exactly reproduce this figure.*
@@ -626,7 +628,8 @@ p_deforest_kernel
 In this kernel regression plot the **discontinuity becomes very clear**. The deforested area increases from about $0.03\%$ of the polygon area deforested on the left side of the cutoff to some value between $0.07\%$ and $0.08\%$ area deforested which is about two and a half times the value on the left of the cutoff.  
 Unfortunately, the function *ksmooth()* does not allow to compute standard errors or confidence intervals. This is why I have calculated bootstrapped $95\%$ confidence intervals. As this takes some hours, I just present the final result here:
 
-![Kernel regression with bootstrapped confidence intervals](Kernel_boot_small.png)
+![Kernel regression with bootstrapped confidence intervals](Kernel_boot_small.png)  
+*Source: Own creation.*
 
 As you can clearly see from the picture, the confidence intervals from the regressions on the left and right side do not overlap - so the jump is significant at least on the $5\%$ level. This is consistent with the according plot by Alix-Garcia et al. for which the code for replication is not available. *(Cf. paper, p.423, Figure 4)*  
 *Imbens and Lemieux (2008, p.622)* recommend not only testing whether the dependent variable shows a jump at the cutoff but also whether there are further jumps (at other values of the running variable) which might not be explainable. Unfortunately, Alix-Garcia et al. don't consider this aspect in their graphical analysis. However, later, when applying the RD Design, they also run regressions which use "wrong" values for the cutoff. These regressions don't show any significant treatment effects on deforestation. *(Cf. paper, p.425)*
@@ -648,13 +651,15 @@ All in all, the graphical analysis reveals that the setting deviates from the id
 ### c) Continuity of control variables at the cutoff
 If apart from the variable indicating treatment (and the variable indicating eligibility, of course) there is another explanatory variable showing a discontinuity at the eligibility threshold or at least in the relevant range around it, one cannot be sure any longer if the jump in the outcome variable is due to the jump in the treatment variable. *(Cf. Imbens and Lemieux (2008); paper, p. 424)*
 This is why one should study the behavior of the control variables at the cutoff. According to Alix-Garcia et al. there is actually only one variable **changing significantly discontinuously at the eligibility threshold: slope**. It is significantly higher among the eligible localities, so on the right-hand side of the cutoff. The authors meet this by using *slope* as control variable in each of their regressions. They don't see this discontinuity preventing them to use an RD design, but rather strengthening their results. *(Cf. paper, p.424)*   
-By running the same kernel regression like in part *b)* of this exercise for each of the covariates (over the marginality index) this result can be reproduced. Without any confidence intervals, the plot of the lines of fitted values from the different kernel regressions looks as follows:
+By running the same kernel regression like in part *a)* of this exercise for each of the covariates (over the marginality index) this result can be reproduced. Without any confidence intervals, the plot of the lines of fitted values from the different kernel regressions looks as follows:
 
-![Kernel regressions for all covariates](Covariates_kernel.png)
+![Kernel regressions for all covariates](Covariates_kernel.png)  
+*Source: Own creation.*
 
 According to that plot, only two variables could pose a problem as they show a jump at the cutoff. To check whether those jumps are significant (on the $5\%$ level) I have calculated bootstrapped $95\%$ confidence intervals for the according kernel regressions. The following plot shows the two lines of fitted values with the confidence intervals:
 
-![Kernel Regressions with confidence intervals of critical covariates](Kernel_degslopeAndForestprior.png)
+![Kernel Regressions with confidence intervals of critical covariates](Kernel_degslopeAndForestprior.png)  
+*Source: Own creation.*
 
 As you can see from those two graphics, for the variable *forest_prior* the confidence levels from the left and right side overlap at the cutoff. This indicates that the jump at the cutoff is not significant on the $5\%$ level. So we cannot neglect on the five percent significance level the null hypothesis saying that there is no jump. For the variable *deg_slope* however, the confidence intervals do not overlap at the cutoff. This means that we can neglect the null hypothesis (no jump) on the $5\%$ significance level. All in all, this is consistent with the authors' statement depicted above.  
 If you are interested in how one can run all the kernel regressions needed for the plots above at once and in how it is possible to get the first of the three plots above, you are invited to solve the optional *Exercise 2.4*.
@@ -819,9 +824,10 @@ p_kern = p_kern +
   ylab("covariate") + ggtitle("Covariates over marginality index")
 p_kern
 ```
-This is finally the plot which I have presented to you in *Exercise 2.3*. Together with the two plots showing confidence levels of the kernel regressions for *deg_slope* and *forest_prior* it is in line with the authors' statement that only the variable *deg_slope* jumps at the cutoff. Just for completeness, I present you the two graphics again which we cannot reproduce throughout this problem set for the reason of computational time.* 
+This is finally the plot which I have presented to you in *Exercise 2.3*. Together with the two plots showing confidence levels of the kernel regressions for *deg_slope* and *forest_prior* it is in line with the authors' statement that only the variable *deg_slope* jumps at the cutoff. Just for completeness, I present you the two graphics again which we cannot reproduce throughout this problem set for the reason of computational time. 
 
-![Kernel Regressions with confidence intervals of critical covariates](Kernel_degslopeAndForestprior.png)
+![Kernel Regressions with confidence intervals of critical covariates](Kernel_degslopeAndForestprior.png)  
+*Source: Own creation.*
 
 - - -
 So to **sum up:** What have you learned in this optional exercise?  
@@ -907,7 +913,7 @@ In the next code chunk please use this function to calculate the **effects of th
 
 ```
 If you would like to see the structure of the output of the function *effects_tobit_dM_AER*, precise numbers of the effects or the according significance levels just click on the *'data' button* where you find the respective data frames you have just created.  
-As rather the rough comparison of the effects than precise numbers are of interest at this point, bar plots showing these effects might be very helpful. The following code chunk uses the command *geom_bar* to create a bar plot for each kind of effect. Have a look at the code and run it. Some information on the used commands and arguments are given in the *'info' box* below.
+As rather the rough comparison of the effects than precise numbers are of interest at this point, bar plots showing these effects might be very helpful. The following code chunk uses the command *geom_bar* to create a bar plot for each kind of effect. Have a look at the code and run it. Some information on the used commands and arguments is given in the *'info' box* below.
 ```{r "2_5__5",fig.height=4, fig.width=11}
 #Load package 'ggplot2'
 library(ggplot2)
@@ -917,21 +923,24 @@ p_sharp_simple_effectP = ggplot() +
                y=sharp_simple_effects[[1]][,1]), 
            stat="identity", position="dodge") + 
   xlab("explanatory variables") + ylab("Effect on P(y>0|x)") +
-  coord_flip()
+  coord_flip() + theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15))
 #Create a bar plot of the effects on E[y|y>0,x] for sharp_RD_simple
 p_sharp_simple_effectE = ggplot() + 
   geom_bar(aes(x=row.names(sharp_simple_effects[[2]]), 
                y=sharp_simple_effects[[2]][,1]), 
            stat="identity", position="dodge") + 
   xlab("explanatory variables") + ylab("Effect on E[y|y>0,x]") +
-  coord_flip()
+  coord_flip() + theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15))
 
 #Load package 'gridExtra'
 library(gridExtra)
 #Show both plots
-grid.arrange(p_sharp_simple_effectP, p_sharp_simple_effectE, ncol=2)
+p_sharp_simple_effectP
+p_sharp_simple_effectE
 ```
-info("'ggplot2' - geom_bar and coord_flip") # Run this line (Strg-Enter) to show info
+info("'ggplot2' - geom_bar, coord_flip and theme") # Run this line (Strg-Enter) to show info
 As you can see, the effect of the intention to treat on $P(y>0|x)$ is not that large compared to the other covariates. It is very similar in absolute size to the effect of road density, population and slope. The effect of the intention to treat on $E[y|y>0,x]$ is even very small compared to the effects of the covariates. Still there are some covariate effects of more or less the same absolute magnitude: slope, road density and the forest baseline.
 
 ### a) Tobit specifications for robustness
@@ -1033,7 +1042,8 @@ $$d = \alpha + \delta E_i + \gamma_1 I_i + \gamma_2 I_i^2 + \gamma_3 I_i^3 + \ga
 with *d* being the dummy indicating whether there was deforestation and the same covariates $\vec{x_i}$ as in the Tobit regressions above.  
 * The second one estimates by OLS the **linear regression model**
 $$\Delta f_i = \alpha + \delta E_i + \gamma_1 I_i + \gamma_2 I_i^2 + \gamma_3 I_i^3 + \gamma_4 I_i^4 + \vec{\beta}' \vec{x_i} + \epsilon_i$$
-using only data on those localities showing positive deforestation (*d* equals $1$).  
+using only data on those localities showing positive deforestation (*d* equals $1$).
+
 Both regressions are based on data sets over the whole range of marginality indices and include a fourth-order polynomial of the marginality index.
 
 In the following code chunk please use the command *lm(formula, data)* to run the OLS regression *simple_d* estimating the LPM and the OLS regression *simple_pct* estimating the linear regression model. Use the subset of observations with positive deforestation (*d* = $1$) for the latter one. The code for showing the results is already given. As you can see, again *robust* standard errors accounting for heteroskedasticity are calculated.  
@@ -1291,7 +1301,7 @@ results.df = convert(list("elab_std" = elab_std[[1]],
 stargazer(results.df, type="html", summary=FALSE)
 ```
 The estimated **treatment effect is positive and significant** on the $5 \%$ level in all three specifications. *Apart from the significance stars you can check this with a simple rule of thumb: If the treatment estimates are about twice as large as the according standard errors, they are significant on the* $5 \%$ *level.* In general, the results are very similar to those from the simplest approach using eligibility as a proxy for treatment in the sharp RD design.
-info("Remark on the results") # Run this line (Strg-Enter) to show info
+info("Remark on the results from Newey_SB_ivtobit") # Run this line (Strg-Enter) to show info
 As the regressions are basically Tobit regressions, the size of the estimated coefficients again has no sensible interpretation. We thus again need to calculate the marginal effects separately. Actually we have already done so because the *Newey_SB_ivtobit()* command does not only return a data frame containing coefficient estimates and standard errors but also a data frame containing the marginal effects of treatment on the probability of deforestation and on the expected percentage of area deforested given there is deforestation. *Note that we focus on treatment here because this is the effect we are after.* The following code chunk shows those results. Just click on the *'check' button* to see them.  
 *This corresponds to table 5, columns (1), (2) and (4) on p.428 of the paper.*
 ```{r "2_7__5",results='asis'}
@@ -1302,7 +1312,7 @@ margEff.df = convert(list("elab_std" = elab_std[[2]],
 stargazer(margEff.df, type="html", summary=FALSE)
 ```
 The results indicate that **treatment increases** both the **probability of deforestation and the percentage of area deforested significantly**. The first effect varies between $1.8$ and $3.7$ percentage points and the second between about $0.09$ and $0.18$ percentage points. These estimates are a bit higher than the ones of the intention-to-treat effect in the simple approach of *Exercise 2.5* (between $1.1$ and $1.6$ percentage points and between $0.05$ and $0.08$ percentage points) but the dimension roughly stays the same and - above all - both approaches state a positive and significant effect.   
-info("Remark on the results") # Run this line (Strg-Enter) to show info
+info("Remark on the results (1)") # Run this line (Strg-Enter) to show info
 Still the marginal effects estimated here seem to be quite small at first sight. To be able to judge it one should compare the numbers to the **baseline probability respectively amount of deforestation** like Alix-Garcia et al. do as well. *(Cf. paper, p.426)* A sensible number for this purpose is the baseline value of the respective quantity among the localities which were not eligible for the program. In the following two code chunks, it is on you to determine those values. Just follow the steps in the code chunk and fill in the correct code.  
 *This corresponds to p.426 in the paper.*
 ```{r "2_7__6"}
@@ -1337,7 +1347,7 @@ info("Robustness tests") # Run this line (Strg-Enter) to show info
 - - -
 
 One aspect to remark here is that in general, treatment effects measured by a classical RD design are only valid for subjects with a value of the running variable very close to the cutoff. This results from the basic idea of the RD design: If treatment is the only variable changing discontinuously at the cutoff, the localities very close to the cutoff are very similar despite treatment. So in spite of the fact that we cannot observe the same localities once treated and once not treated we can determine the (causal) treatment effect by just comparing the localities very close to the cutoff - treated versus untreated. This is why the measured effect is also only valid for a very small area around the cutoff. *(Cf. Angrist and Pischke (2015, Chapter 4))*  
-*Jacob and Lefgren (2004, Chapter V)* treat the interpretation for the case using a RD design with excluded instruments that allow a fast but *continuous* increase in some marginal zone - like in this exercise. They come to the conclusion that the area for which the measured effect is valid is a bit larger, but still limited to a value of the running variable close to the cutoff.
+*Jacob and Lefgren (2004, Chapter V)* treat the interpretation for the case using an RD design with excluded instruments that allow a fast but *continuous* increase in some marginal zone - like in this exercise. They come to the conclusion that the area for which the measured effect is valid is a bit larger, but still limited to a value of the running variable close to the cutoff.
 
 So in our case, the estimated intention-to-treat effect from the simple approach in *Exercise 2.5* is only valid for localities with a marginality index close to the eligibility cutoff; the estimated treatment effect from the more elaborate approach of this exercise is valid "in the population that is just below the
 marginality level required to be able to receive payments" *(paper, p.432)*. The effects measured are thus so-called **Local Average Treatment Effects (LATE)**. *(p.433)*
@@ -1379,13 +1389,13 @@ To get an idea about what the data set looks like, you can either run the follow
 head(data_household)
 ```
 What you might notice first is that for some observations there are missing values. This is indicated by *NA* or by an empty field. In the regressions of this problem set, we will deal with this in the following way: If an observation does not contain the value of the variable which is of interest for the computation, it will be ignored.
-info("Comment on this data set") # Run this line (Strg-Enter) to show info
+info("Comment on household data set") # Run this line (Strg-Enter) to show info
 The variables can be divided into three main groups:
 * *treat*, *poor*, *post_year* state if a household was in the treatment group, eligible and if the observation was made in the posttreatment period
 * *dens_road_inv* and variables ending in *"_densroadinv"* give information related to the infrastructure quantity of the locality a household belongs to
 * *dpw_beef*, *dpw_milk*, *n_cows* etc. - some household-specific consumption and production variables
 
-We will have a look at the first two groups of variables in this exercise, leaving the consumption and production variables to *Exercise 3.2*.
+We will have a look at the first two groups of variables in this exercise, leaving the consumption and production variables to the *Exercises 3.2* and *3.3*.
 
 ### b) Treatment and Eligibility in the Progresa Data
 The variables defining to which categories (treated/control, eligible/noneligible) an observation belongs are the variables *treat* and *poor*. Being part of the treatment group is indicated by *treat* being equal to $1$ (for the control group $0$, respectively). Being poor enough to be eligible is indicated by *poor* being equal to *"pobre"* (Spanish for "poor"), being "too wealthy" by *poor* being equal to *"no pobre"* ("not poor"), respectively. *(Cf. available STATA code files)*  
@@ -1407,7 +1417,7 @@ What doesn't become clear from this graphic but will play an important role late
 * The $x$ axis shall denote the time aspect (*period*).  
 * There shall be a separate histogram for the different levels of the factor variable *poor* (*pobre*, *no pobre* and *NA*). Information on how to realize this is given in the next *'info' box*.
 
-Please use the data set *d* again for plotting.
+Please use the data set *d* again for plotting. A template of the code is already given.
 info("ggplot2: Graphs for different groups of observations - in different figures") # Run this line (Strg-Enter) to show info
 ```{r "3_1__4",fig.width=12}
 #Add a column indicating pre- and posttreatment period as strings
@@ -1415,6 +1425,14 @@ d = mutate(d, period = ifelse(post_year==0,
                                          "pre_treatment", "post_treatment"))
 #Plot histograms of post- and pretreatment observations
 #for treatment and control group
+# ggplot(...) +
+#   geom_bar(...) +
+#   ylab(...) + facet_wrap(...) +
+#   theme(axis.text = element_text(size = 15)) +
+#   theme(axis.title = element_text(size = 15)) +
+#   theme(legend.text = element_text(size = 15)) +
+#   theme(legend.title = element_text(size = 15)) +
+#   theme(strip.text = element_text(size=12))
 
 ```
 We can see that the numbers of observations are not equal across all four categories within one figure. In general there are more observations from treated households which makes sense because the treatment group consists of $320$ localities while the control group consists only of $186$. How these four categories in each figure will be used later on to detect the effect of treatment you will learn in the next exercise.
@@ -1520,7 +1538,7 @@ In the following we are going to **visualize the effects of treatment on consump
 
 info("Effectplot") # Run this line (Strg-Enter) to show info
 ```{r "3_2__3"}
-#OLs regressions for dpw_beef and dpw_milk
+#OLS regressions for dpw_beef and dpw_milk
 dd_beef_lm = lm(dpw_beef ~ treat + post_year + te,
              data = data_household, subset = (poor=="pobre"), 
              na.action=na.omit)
@@ -1563,7 +1581,7 @@ So according to our estimates, there is **no significant effect of treatment on 
 Remember that we are actually looking for a microeconomic explanation of the increase in deforestation in response to the program. The results up to now indicate that treatment with the program leads to an increase in the households' consumption of land-intensive goods. This already leads us closer to our goal. With the concrete quantitative estimates of the treatment effect on consumption we can check now whether the estimated size of the deforestation increase in response to treatment with the program *(Exercise 2)* makes sense given the estimated increase in consumption in response to treatment *(current exercise)*.
 
 Alix-Garcia et al. conduct a small study on this question. They first use various estimates to get an **approximate number of the additional land size per locality** to support the estimated increase in beef and milk production: almost $0.25$ square kilometers. *(Cf. paper, p. 430)*   
-Further they simulate the **expected average area deforested per locality** in response to treatment. In the code chunk below we will replicate these calculations. To make it comprehensible, we will use estimates we have calculated ourselves, even though this is not exactly (but comparable to) what the others use: In the fourth-order polynomial regression specification in the most elaborate approach (*Exercise 2.7*) the estimated marginal effect on the expected percentage of polygon area deforested given there is deforestation was $0.180\%$. Multiplying this with the average polygon size among treated localities with positive deforestation and with the proportion of those localities with positive deforestation among the treated localities gives an estimate of the area deforested due to treatment. Just go through the instructions in the next code chunk and run the necessary calculations for the last two factors. *(Cf. paper, p.430)*
+Further they simulate the **expected average area deforested per locality** in response to treatment. In the code chunk below we will replicate these calculations. To make it comprehensible, we will use estimates we have calculated ourselves, even though this is not exactly (but comparable to) what the authors use: In the fourth-order polynomial regression specification in the most elaborate approach (*Exercise 2.7*) the estimated marginal effect on the expected percentage of polygon area deforested given there is deforestation was $0.180\%$. Multiplying this with the average polygon size among treated localities with positive deforestation and with the proportion of those localities with positive deforestation among the treated localities gives an estimate of the area deforested due to treatment. Just go through the instructions in the next code chunk and run the necessary calculations for the last two factors. *(Cf. paper, p.430)*
 
 *This corresponds to the verbal description on p.430 in the paper.*
 ```{r "3_2__7"}
@@ -1680,9 +1698,9 @@ In the following quiz, you can check whether you have understood the main ideas 
 
 
 ## Exercise 3.4 -- The role of infrastructure - Production/Consumption
-In the last two exercises we found out that an increase in income due to treatment is associated with an increase in the demand of the agricultural products beef and milk on the household level. As goods are traded within markets, this demand does not have to be sourced by the treated households alone but can also be sourced by other members of the market. In the last exercise we therefore also considered untreated households of the same localities to see whether their production increased due to the treatment of their poorer neighbors.
+In the *Exercises 3.2* and *3.3* we found out that an increase in income due to treatment is associated with an increase in the demand of the agricultural products beef and milk on the household level. As goods are traded within markets, this demand does not have to be sourced by the treated households alone but can also be sourced by other members of the market. In *Exercise 3.3.* we therefore also considered untreated households of the same localities to see whether their production increased due to the treatment of their poorer neighbors.
 
-But who says that the increased demand has to be sourced from inside the same locality? The more infrastructure there is, the better a locality is connected to other localities which means that the market is larger. This way, the goods needed to meet the risen demand can be bought from and thus produced in a larger area. The production effect is thus spread and it might be more difficult to see any effect in the treated locality itself. *A deeper insight into the theoretical background of this line of argument and its sources will be given in Exercise 3.6.* So a possible explanation why we could not observe any significant treatment or spillover effect on production in the last exercise is that the effect could probably be too small if it is averaged across the localities' levels of road density.  
+But who says that the increased demand has to be sourced from inside the same locality? The more infrastructure there is, the better a locality is connected to other localities which means that the market is larger. This way, the goods needed to meet the risen demand can be bought from and thus produced in a larger area. The production effect is thus spread and it might be more difficult to see any effect in the treated locality itself. *A deeper insight into the theoretical background of this line of argument and its sources will be given in Exercise 3.6.* So a possible explanation why we could not observe any significant treatment or spillover effect on production in *Exercise 3.3* is that the effect could probably be too small if it is averaged across the localities' levels of road density.  
 In the following we will therefore no more assume the effect on production to be the same for all localities (homogeneous in infrastructure quantity) but allow the **local effect on production** to be **heterogeneous** with respect to **road density as a "proxy for market connectedness"** *(paper, p.428)*. Let's see whether this more differentiated approach provides some evidence for the microeconomic explanation of a demand-driven increase in deforestation and at the same time more information about where the risen demand is met and thus where the environmental consequences take place.
 
 ### a) A heterogeneous estimation approach
@@ -1735,7 +1753,7 @@ showreg(list(dd_plots_poor_rd, dd_lnhectares_poor_rd, dd_cows_poor_rd),
 ```
 As we are interested in the treatment effect measured by the DD estimator $\widehat{\delta_{DD}}$ the coefficient estimates of interest are those of *treat:post_year* ($\widehat{\beta_3}$) and *treat:post_year:dens_road_inv* ($\widehat{\beta_7}$). This is because in this model the **difference-in-difference estimator of the treatment/spillover effect** is given by
 $$\widehat{\delta_{DD}} = \widehat{\beta_3} + \widehat{\beta_7} R_i$$
-Here, $\widehat{\beta_3}$ is the estimated effect for the case in which the inverse road density is close to $0$ (very much infrastructure) and $\widehat{\beta_7}$ describes how the effect changes with the inverse road density. *(Cf. paper, p.428)* This can be shown by using again the definition of the DD estimator introduced in the last exercise (difference in differences in expectation values). *If you are interested in the according derivation, have a look at the 'info' box.*
+Here, $\widehat{\beta_3}$ is the estimated effect for the case in which the inverse road density is close to $0$ (very much infrastructure) and $\widehat{\beta_7}$ describes how the effect changes with the inverse road density. *(Cf. paper, p.428)* This can be shown by using again the definition of the DD estimator introduced in *Exercise 3.2* (difference in differences in expectation values). *If you are interested in the according derivation, have a look at the 'info' box.*
 
 info("DD estimator varying in R") # Run this line (Strg-Enter) to show info
 Both components of the DD estimator, the coefficients on *treat:post_year* and *treat:post_year:dens_road_inv*, are not significant for the variables describing agricultural land - like in the homogeneous model estimation. For the variable describing the number of cows the coefficient $\widehat{\beta_3}$ describing the treatment effect for very well connected households is not significant either and the coefficient $\widehat{\beta_7}$ is only significant on the $10\%$ level which is quite weak. Further, the authors argue with the help of further computations that it is "unlikely that recipient households are supplying their entire increase in demand". *(paper, p.428)* So one can say that **regardless of the quantity of infrastructure no "substantial increase in agricultural production"** *(paper, p.428)* can be measured **among treated households**. The authors further give a possible explanation for this observation: The payments of the poverty alleviation program are conditional on children attending school (among other conditions). Thus the common practice of using child labor cannot be practiced easily anymore which makes an increase in production more difficult. *(Cf. paper, p.428)*
@@ -1849,14 +1867,15 @@ So as already revealed the **consumption** of the agricultural products beef and
 So all in all, the results from this exercise indicate that **treatment** with the program leads to a **homogeneous increase in the consumption of beef and milk** and to a **heterogeneous increase in the local production of ineligible neighboring households** but **not to a considerable increase in production among the treated households**.  
 The authors conclude from these results the following functional chain: *(paper, p.432)*
 
-![Exercise 3_4 Functional chain](functional_chain_3_4_kleiner.png)
+![Exercise 3_4 Functional chain](functional_chain_3_4_kleiner.png)  
+*Source: Own creation.*
 
 At this point it is time to define the term **ecological footprint**. Wackernagel and Rees *(1996, pp.9-12)* explain that the ecological footprint of a subject measures the land area needed to support this subject's lifestyle in the long run: the area needed to supply his/her consumption of food, drinks, energy etc. and the area needed to dispose his/her waste.  
 So, if you wondered why production is not mentioned in the flow chart: It is hidden behind the box "Increased ecological footprint of land use".  
 *If you are interested in estimating your total ecological footprint, have a look at the following websites: <http://www.fussabdruck.de/>, <http://www.mein-fussabdruck.at/> (both sites are in German) or <http://www.footprintnetwork.org/en/index.php/GFN/page/calculators/> (different languages)*
 
 ## Exercise 3.5 -- The role of infrastructure - Deforestation
-At the end of the last exercise we have stated a functional chain linking treatment and deforestation. This approach, which states a demand-driven increase in deforestation, seems to be plausible in so far as we could find an increase in the consumption of land-intensive goods (see *Exercises 3.3, 3.4*) and as the size of this increase supports the hypothesis that consumption is a major mechanism linking treatment and deforestation (see plausibility check in *Exercise 3.3*). However, as the corresponding local production increase is heterogeneous (see *Exercise 3.4*), we have to check furthermore whether we can also find **heterogeneity with respect to road density in the treatment effect on local deforestation**. If this was not the case, we would have to give up the current explanation.
+At the end of the last exercise we have stated a functional chain linking treatment and deforestation. This approach, which states a demand-driven increase in deforestation, seems to be plausible in so far as we could find an increase in the consumption of land-intensive goods (see *Exercises 3.2, 3.4*) and as the size of this increase supports the hypothesis that consumption is a major mechanism linking treatment and deforestation (see plausibility check in *Exercise 3.2*). However, as the corresponding local production increase is heterogeneous (see *Exercise 3.4*), we have to check furthermore whether we can also find **heterogeneity with respect to road density in the treatment effect on local deforestation**. If this was not the case, we would have to give up the current explanation.
 
 Alix-Garcia et al. for the same reason test for heterogeneity in the deforestation effect with respect to road density and use two approaches for this purpose. *(Cf. paper, section V.A, table 9)* In the following we are going to reproduce the simpler one as it is very intuitive and the results are more easily interpretable: We will use the most elaborate RD Design approach and run the according regression for the percentage of area deforested three times - once for the subset of data containing the observations with the **lowest**, once for a subset with the **highest road densities** and once for a subset with road densities **in between**. The basic data set is again *"data_deforestation.rds"* here because we are interested in deforestation. *(Cf. paper, section V.A, table 9 columns (1)-(6))*  
 Please note that the results from the alternative way to test for heterogeneity here *(paper, table 9, columns (7) and (8))* are in parts not as convincing as the results from the approach regarded here but still consistent with them.
@@ -1946,7 +1965,7 @@ results.df = convert(list("low" = elab_low[[1]],
 stargazer(results.df, type="html", summary=FALSE)
 ```
 As we are only interested in whether the treatment effect differs for different levels of road density and not in the coefficients of the covariates, please focus on the first row of the presented results. Actually, the results are as expected given our theoretical, intuitive thoughts and the results from the earlier exercises: A **significant treatment coefficient** can only be measured for those localities with the **lowest road densities**.
-info("Remark on the results") # Run this line (Strg-Enter) to show info
+info("Remark on the results (2)") # Run this line (Strg-Enter) to show info
 Remember that the treatment coefficient from above is not equal to the marginal effect of treatment on the dependent variable - marginal effects have to be calculated separately. Again we are interested in the marginal effect of treatment on the **probability of deforestation** as well as on the **expected percentage of area deforested given positive deforestation**. The according estimates are already contained in the list returned by *Newey_SB_ivtobit* and the next code chunk shows them. Just click on the *'check' button*.  
 *This corresponds to table 9, columns (1), (3) and (5) on p.431 in the paper.*
 ```{r "3_5__4",results='asis'}
@@ -1959,7 +1978,7 @@ margEff.df = convert(list("low" = elab_low[[2]],
 stargazer(margEff.df, type="html", summary=FALSE)
 ```
 According to the estimates, in isolated localities treatment increases the probability of deforestation by almost $8$ percentage points and the percentage of area deforested by about $0.25$ percentage points among deforesters while in localities with medium or high road density no significant marginal effect of treatment on deforestation can be measured. Recall from *Exercise 2* that the marginal effect estimates from the several specifications of the regressions on the whole data set *data_deforest* lie between $1.8$ and $3.7$ percentage points for the probability and between $0.09$ and $0.18$ percentage points for the size of deforestation. So with respect to both variables the **isolated localities** show a **much higher treatment effect on deforestation than the average locality**.
-info("Remark on the results") # Run this line (Strg-Enter) to show info
+info("Remark on the results (3)") # Run this line (Strg-Enter) to show info
 As robustness test, the authors don't only use IV Tobit in order to estimate the elaborate regression for all three groups of road density, but also IV OLS. The regressions lead to the same results concerning the significance of the treatment effect which supports the results obtained through the IV Tobit estimation reproduced in this exercise. *(Cf. paper, section V.A; table 9, columns (2), (4), (6))* 
 
 ### c) Excursus: Baseline deforestation among isolated localities
@@ -2032,14 +2051,21 @@ p = ggplot() +
   geom_point(data=data_model, 
              aes(x=eta, y=ate, group = tau, color=tau)) + 
   xlab("market size [numbers of members]") + 
-  ylab("avg. treatment effect")
+  ylab("avg. treatment effect") + 
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(legend.text = element_text(size = 15)) +
+  theme(legend.title = element_text(size = 15))
 #Creating the same plot as log-log-plot
 p_ln = ggplot() + 
   geom_point(data=data_model, 
              aes(x=log(eta), y=log(ate), group = tau, color=tau)) + 
   xlab("log(market size [numbers of members])") + 
-  ylab("log(avg. treatment effect)")
-
+  ylab("log(avg. treatment effect)") + 
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(legend.text = element_text(size = 15)) +
+  theme(legend.title = element_text(size = 15))
 
 #Load package 'gridExtra'
 library(gridExtra)
@@ -2053,19 +2079,20 @@ The more infrastructure, the more local markets are connected to each other. So 
 
 - - -
 With this theoretical framework quantified by the model above in mind how would you answer the following questions:
+- - -
 #! addon__quiz__ModelCheck
 - - -
 
 ### b) Theoretical predictions - and our results
 Returning now to the **subject of this problem set** - the effect of treatment with the poverty alleviation program Oportunidades - which points in the analysis up to now are consistent with this theoretical model and which further conclusion can we draw from the model?  
 In the following, please indicate whether you think that our results are consistent or not with the following predictions. As this shall invite you to rethink the meaning of the results we have obtained but not be a test as such, you will be given the sample solution after having clicked on the *'check' button* - no matter if your answer is correct or not.
-
+- - -
 #! addon__quiz__Prediction 1
-<br>
+- - -
 #! addon__quiz__Prediction 2
-<br>
+- - -
 #! addon__quiz__Prediction 3
-<br><br>
+- - -
 
 ### c) Spatial contour of the effect
 After all, one question is still left: Where is the area which belongs to the increase of the ecological footprint we have estimated actually located?
@@ -2136,7 +2163,7 @@ In general, I doubt that deforestation due to an increase in the consumption of 
 To extend the studies in the paper, it would be interesting to get information on where the treated households bought their food - especially beef and milk. With the help of such data one could collect further information on the validity of the adaption of the model from rainfall shocks to the context of the paper.
 
 For future researches, it might be a good complement to the paper to study long-term effects of the program on deforestation. Such studies could help to overcome the issue of not studying the total welfare. It would be interesting to see whether consumption increases further or reaches some saturation level. Further, one could study whether deforestation in the long term increases in the same way as consumption or if people develop more efficient agricultural techniques which reduces the need of land area as already depicted in the World Development Report from 1992 *(Cf. World Bank (1992))*.  
-Even though it might be difficult to conduct such studies based on data from the past, like on Oportunidades or on Progresa, one could also use data from the present as the program (named Prospera) still exists today. The existence of the program - albeit with adapted rules - also shows that even about 20 years after the initiation of the program it is still a current issue.
+Even though it might be difficult to conduct such studies based on data from the past, like on Oportunidades or on Progresa, one could also use data from the present as the program (named Prospera) still exists today (as of 2016). The existence of the program - albeit with adapted rules - also shows that even about 20 years after the initiation of the program it is still a current issue. *(Cf. [Prospera homepage (2016)](http://www.gob.mx/prospera "http://www.gob.mx/prospera"))*
 
 ### d) ... Finally, don't forget ...
  ... that on your economic journey you have passed lots of econometric issues - from the classical linear regression model and the linear probability model over the Tobit and IV Tobit model to different estimation methods, causality problems, the interpretation and comparison of results and many details linked to those issues. I hope you can carry with you some new aspects or have become aware again of important details in issues already known to you.  
@@ -2147,36 +2174,36 @@ very much for going on this interactive economic, econometric and programming jo
 
 
 ## Exercise Bib -- Bibliography
-## Books and Papers:
+## Books, Papers and Reports:
 * Alix-Garcia, J. & C. McIntosh & K. R. E. Sims & J.R. Welch (2013): The Ecological Footprint of Poverty Alleviation: Evidence from Mexico's Oportunidades Program. *The Review of Economics and Statistics, 95*(2), pp. 417-435.
 
 * Angelsen, A. & D. Kaimowitz (1999): Rethinking the Causes of Deforestation: Lessons from Economic Models. *The World Bank Research Observer, 14*(1), pp. 73-98.
 
 * Angrist, J. D. & J. Pischke (2015): *Mastering 'metrics: the path from cause to effect*. Princeton, NJ: Princeton University Press.
 
-* Barbier, E. B. & J. C. Burgess (2001): The Economics of Tropical Deforestation. *Journal of Economic Surveys, 15*(3).
+* Barbier, E. B. & J. C. Burgess (2001): The Economics of Tropical Deforestation. *Journal of Economic Surveys, 15*(3), pp. 413-433.
 
-* Blundell, R. & A. Duncan (1998), Kernel Regression in Empirical Microeconomics. *The Journal of Human Resources, 33*(1), p. 62-87. <http://www.jstor.org/stable/146315>. 
+* Blundell, R. & A. Duncan (1998), Kernel Regression in Empirical Microeconomics. *The Journal of Human Resources, 33*(1), pp. 62-87.
 
 * Deininger, K. & B. Minten (1999): Poverty, Policies, and Deforestation: The Case of Mexico. *Economic Development and Cultural Change, 47*(2), pp. 313-344.
 
-* Deininger, K. & B. Minten (2002): Determinants of Deforestation and the Economics of Protection: An Application to Mexico. *Journal of Agricultural Economics 84*(4), pp. 943-960.
+* --------- (2002): Determinants of Deforestation and the Economics of Protection: An Application to Mexico. *Journal of Agricultural Economics 84*(4), pp. 943-960.
 
-* Foster, A. D. & M. R. Rosenzweig (2003): Economic Growth and the Rise of Forests. *The Quarterly Journal of Economics, 118*(2), pp. 601-637. <http://www.jstor.org/stable/25053915>.
+* Foster, A. D. & M. R. Rosenzweig (2003): Economic Growth and the Rise of Forests. *The Quarterly Journal of Economics, 118*(2), pp. 601-637.
 
-* Greene, W. (1999): Marginal effects in the censored regression model. *Economics Letters, 64*(1), pp. 43-49. <http://pages.stern.nyu.edu/~wgreene/censored.doc>.
+* Greene, W. (1999): Marginal effects in the censored regression model. *Economics Letters, 64*(1), pp. 43-49. 
 
-* Greene, W. H. (2008): *Econometric Analysis*. Edition 6, Upper Saddle River, NJ: Pearson Education.
+* Greene, W. H. (2008): *Econometric Analysis*. 6th Edition, Upper Saddle River, NJ: Pearson Education.
 
-* Hackl, P. (2013): *Einführung in die Ökonometrie*. Edition 2, Munich: Pearson Deutschland.
+* Hackl, P. (2013): *Einführung in die Ökonometrie*. 2nd Edition, Munich: Pearson Deutschland.
 
-* Härdle, W. & O. Linton (1994): Applied nonparametric methods. In: *Handbook of Econometrics*, Edition 4, Chapter 38, Elsevier, pp. 2295-2339.
+* Härdle, W. & O. Linton (1994): Applied nonparametric methods. In:  Engle, R. F. & D. McFadden, Eds., *Handbook of Econometrics*, Volume 4, Chapter 38, Amsterdam: Elsevier, pp. 2295-2339.
 
 * Imbens, G. W. & T. Lemieux (2008): Regression discontinuity designs: A guide to practice. *Journal of Econometrics 142*(2), pp. 615-635.
 
-* Jacob, B. A. & L. Lefgren (2004): Remedial Education and Student Achievement: A Regression-Discontinuity Analysis. The Review of Economics and Statistics, 86(1), pp. 226-244.
+* Jacob, B. A. & L. Lefgren (2004): Remedial Education and Student Achievement: A Regression-Discontinuity Analysis. *The Review of Economics and Statistics, 86*(1), pp. 226-244.
 
-* Kennedy, P. (2008): *A Guide to Econometrics*. Edition 6, Malden, MA: Blackwell Publishing.
+* Kennedy, P. (2008): *A Guide to Econometrics*. 6th Edition, Malden, MA: Blackwell Publishing.
 
 * Newey, W. K. (1987): Efficient Estimation of Limited Dependent Variable Models with Endogenous Explanatory Variables. *Journal of Econometrics 36*(3), pp. 231-250.
 
@@ -2186,38 +2213,38 @@ very much for going on this interactive economic, econometric and programming jo
 
 * Skoufias, E. (2005): *PROGRESA and Its Impacts on the Welfare of Rural Households in Mexico*. Washington, D.C.: International Food Policy Research Institute.
 
-* Son, H. H. (2011): *Equity and Well-Being: Measurement and Policy Practice*. Oxon: Routledge. <http://www.adb.org/sites/default/files/publication/29288/equity-well-being.pdf>.
+* Son, H. H. (2011): *Equity and Well-Being: Measurement and Policy Practice*. Oxon, UK: Routledge and Asian Development Bank. <http://www.adb.org/sites/default/files/publication/29288/equity-well-being.pdf>.
 
 * Wackernagel, M. & W. Rees (1996): *Our ecological footprint: Reducing Human Impact on the Earth*. Gabriola Island, BC: New Society Publishers.
 
 * Wooldridge, J. M. (2002): *Econometric Analysis of Cross Section and Panel Data*. Cambridge, MA: MIT Press.
 
-* Wooldridge, J. M. (2010): *Econometric Analysis of Cross Section and Panel Data*. Edition 2, Cambridge, MA: MIT Press.
+* --------- (2010): *Econometric Analysis of Cross Section and Panel Data*. 2nd Edition, Cambridge, MA: MIT Press.
 
-* World Bank (1992): *World Development Report 1992: Development and the Environment*. New York: Oxford University Press. https://openknowledge.worldbank.org/handle/10986/5975.
+* World Bank (1992): World Development Report 1992: Development and the Environment. New York, NY: Oxford University Press. <https://openknowledge.worldbank.org/handle/10986/5975>.
 
 * Zwane, A. P. (2007): Does poverty constrain deforestation? Econometric evidence from Peru. *Journal of Development Economics, 84*(1), pp. 330-349.
 
-## Websites:
+## Websites and Manuals:
 
-* CRAN Reference manual for package 'car': <https://cran.r-project.org/web/packages/car/car.pdf>, retrieved September 22, 2016.
+* CRAN Reference manual for package 'car' (2016): <https://cran.r-project.org/web/packages/car/car.pdf>, retrieved September 22, 2016.
 
-* Program's website: <https://www.prospera.gob.mx/swb/swb/PROSPERA2015/>, retrieved April 29, 2016.
+* Prospera homepage (2016): <http://www.gob.mx/prospera>, retrieved July 5, 2016.
 
 * Stata manual, command ivtobit (2016): <http://www.stata.com/manuals13/rivtobit.pdf>, retrieved September 1, 2016.
 
 * Stata manual, command ivprobit (2016): <http://www.stata.com/manuals13/rivprobit.pdf>, retrieved September 1, 2016.
 
-* Stata manual, command regress (2016): <http://www.stata.com/manuals13/rregress.pdf>, retrieved October 19, 2016
+* Stata manual, command regress (2016): <http://www.stata.com/manuals13/rregress.pdf>, retrieved October 19, 2016.
 
-* Stata manual, Chapter 20 (2016): <http://www.stata.com/manuals13/u20.pdf>, retrieved October 19, 2016
+* Stata manual, Chapter 20 (2016): <http://www.stata.com/manuals13/u20.pdf>, retrieved October 19, 2016.
 
-* NASA Earth Observatory (2016): Weier, J. & D. Herring (2000): Measuring Vegetation (NDVI & EVI), <http://earthobservatory.nasa.gov/Features/MeasuringVegetation/measuring_vegetation_1.php>, retrieved September 1, 2016.
+* Weier, J. & D. Herring (2000): Measuring Vegetation (NDVI & EVI). *NASA Earth Observatory*. August 30, 2000. <http://earthobservatory.nasa.gov/Features/MeasuringVegetation/printall.php>.
 
 ## R and R Packages:
 * 'AER': Kleiber, C. & A. Zeileis (2008): *Applied Econometrics with R*. New York, NY: Springer-Verlag. <http://CRAN.R-project.org/package=AER>.
 
-* 'car': Fox, J. & S. Weisberg (2011): *An R Companion to Applied Regression*. Edition 2, Thousand Oaks, CA: Sage Publications. <http://socserv.socsci.mcmaster.ca/jfox/Books/Companion>.
+* 'car': Fox, J. & S. Weisberg (2011): *An R Companion to Applied Regression*. 2nd Edition, Thousand Oaks, CA: Sage Publications. <http://socserv.socsci.mcmaster.ca/jfox/Books/Companion>.
 
 * 'censReg': Henningsen, A. (2013): *censReg: Censored Regression (Tobit) Models*. R package version 0.5-20. <https://CRAN.R-project.org/package=censReg>.
 
@@ -2225,7 +2252,7 @@ very much for going on this interactive economic, econometric and programming jo
 
 * 'dplyr': Wickham, H. & R. Francois (2016): *dplyr: A Grammar of Data Manipulation*. R package version 0.5.0. <https://CRAN.R-project.org/package=dplyr>.
 
-* 'dplyrExtras': Kranz, S. (2016): *dplyrExtras: extra functionality for dplyr like mutate_rows for mutation of a subset of rows*. R package version 0.1.3. <https://github.com/skranz/dplyrExtras>
+* 'dplyrExtras': Kranz, S. (2016): *dplyrExtras: extra functionality for dplyr like mutate_rows for mutation of a subset of rows*. R package version 0.1.3. <https://github.com/skranz/dplyrExtras>.
 
 * 'ggplot2': Wickham, H. (2009): *ggplot2: Elegant Graphics for Data Analysis*. New York, NY: Springer-Verlag.
 
@@ -2258,13 +2285,13 @@ Statistical Software 27*(5). <http://www.jstatsoft.org/v27/i05/>.
 
 ## Data and Code
 * original data sets and available STATA code files (used type of data files: filename extension ".dta"):  
-Alix-Garcia, J. & C. McIntosh & K. R. E. Sims & J.R. Welch (2013): *Replication data for: The Ecological Footprint of Poverty Alleviation: Evidence from Mexico's Oportunidades Program*. V2, Harvard Dataverse. <http://hdl.handle.net/1902.1/22101>
+Alix-Garcia, J. & C. McIntosh & K. R. E. Sims & J.R. Welch (2013): *Replication data for: The Ecological Footprint of Poverty Alleviation: Evidence from Mexico's Oportunidades Program*. V2, Harvard Dataverse. <http://hdl.handle.net/1902.1/22101>.
 
 
 
 ## Exercise A -- Appendix
 ### A 1 Newey two-step estimator
-There are several commands in R to estimate Tobit regressions. However, up to date there seems to be no command estimating a Tobit regression with one or more endogenous variables (called "IV Tobit" in the problem set). In theory, there are several estimators for the coefficients of such a model. As I want to reproduce the results from the paper in the problem set, I prefer using an estimator which comes quite close to it but at the same time does not require too much computational time. As explained in the problem set I therefore choose the so-called **Newey two-step estimator**. Apart from the already mentioned advantages, it does not require starting values which also speaks in favor of it and against the maximum-likelihood estimator. As sources for the implementation I mainly used the original paper Newey (1987) where the estimator has been introduced but also the STATA help pages on the ivtobit and ivprobit command.
+There are several commands in R to estimate Tobit regressions. However, up to date there seems to be no command estimating a Tobit regression with one or more endogenous variables (called "IV Tobit" in the problem set). In theory, there are several estimators for the coefficients of such a model. As I want to reproduce the results from the paper in the problem set, I prefer using an estimator which comes quite close to it but at the same time does not require too much computational time. As explained in the problem set I therefore choose the so-called **Newey two-step estimator**. Apart from the already mentioned advantages, it does not require starting values which also speaks in favor of it and against the maximum-likelihood estimator. As sources for the implementation I mainly used the original paper Newey (1987) where the estimator has been introduced but also [Stata manual, command ivtobit (2016)](http://www.stata.com/manuals13/rivtobit.pdf "http://www.stata.com/manuals13/rivtobit.pdf") and [Stata manual, command ivprobit (2016)](http://www.stata.com/manuals13/rivprobit.pdf "http://www.stata.com/manuals13/rivprobit.pdf").
 
 In order to make the description of my implementation steps clear I will sum up the main points from the original paper by **Newey (1987)** here:  
 The underlying model is as follows:
@@ -2307,7 +2334,7 @@ In the case of the endogenous *Tobit* model the two-stage instrumental variables
 
 *(Cf. Newey (1987))*
 
-The following points describe in detail how I obtain the different input parameters according to the description in Newey (1987). I should remark here that I focus on cases with only one endogenous explanatory variable, so $Y_t$ is a scalar. **My implementation** is analogous to the estimation steps on page 12 in the STATA ivprobit help file - adapted to the IV Tobit framework. *(Cf. STATA ivtobit help site, p.10)*
+The following points describe in detail how I obtain the different input parameters according to the description in Newey (1987). I should remark here that I focus on cases with only one endogenous explanatory variable, so $Y_t$ is a scalar. **My implementation** is analogous to the estimation steps on page 12 in the STATA ivprobit help file - adapted to the IV Tobit framework. *(Cf. [Stata manual, command ivtobit (2016, p.10)](http://www.stata.com/manuals13/rivtobit.pdf "http://www.stata.com/manuals13/rivtobit.pdf"))*
 
 * $\widehat{D}$: I calculate $\widehat{D}$ according to (6) with $\widehat{\vec{\pi}}$ from an OLS regression of (3).  
 I call this regression (I) and the estimates of $\vec{\pi}$ $\widehat{\overrightarrow{\pi_l}}$.
